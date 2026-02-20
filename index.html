@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ReadFlow — Leitura Personalizada</title>
+    <meta name="description"
+        content="ReadFlow — Aplicação de leitura personalizada com tipografia, cores, modo biônico, modo foco e muito mais.">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#4e54c8">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Georgia&family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Merriweather:wght@300;400;700&family=Nunito:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@400;600;700&family=Roboto+Slab:wght@300;400;600&family=Source+Serif+4:wght@300;400;600&family=Crimson+Text:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <a class="logo" href="#">
+            <div class="logo-icon">
+                <span class="material-icons-round">auto_stories</span>
+            </div>
+            <span>ReadFlow</span>
+        </a>
+        <div class="header-actions">
+            <button class="btn-icon" id="toggleSidebar" title="Painel de configurações">
+                <span class="material-icons-round">tune</span>
+            </button>
+            <button class="btn-icon" id="minimapBtn" title="Mini-mapa do texto">
+                <span class="material-icons-round">map</span>
+            </button>
+            <button class="btn-icon" id="shortcutsBtn" title="Atalhos de teclado (?)">
+                <span class="material-icons-round">keyboard</span>
+            </button>
+            <button class="btn-icon" id="exportPdfBtn" title="Exportar como PDF">
+                <span class="material-icons-round">picture_as_pdf</span>
+            </button>
+            <button class="btn-icon" id="focusMode" title="Modo foco (F)">
+                <span class="material-icons-round">center_focus_strong</span>
+            </button>
+            <button class="btn-icon" id="darkUiToggle" title="Tema escuro da interface">
+                <span class="material-icons-round">dark_mode</span>
+            </button>
+            <button class="btn-icon" id="fullscreenBtn" title="Tela cheia">
+                <span class="material-icons-round">fullscreen</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <!-- TEXT INPUT + IMPORT -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span class="material-icons-round">edit_note</span>
+                Inserir Texto
+            </div>
+
+            <div class="drop-zone" id="dropZone" title="Clique ou arraste um arquivo .txt ou .pdf">
+                <span class="material-icons-round drop-icon">upload_file</span>
+                <p>Arraste um arquivo <strong>.txt</strong> ou <strong>.pdf</strong> aqui<br>ou <strong>clique para
+                        importar</strong></p>
+                <input type="file" id="fileInput" accept=".txt,.pdf">
+            </div>
+
+            <div class="text-input-wrapper">
+                <textarea class="text-input" id="textInput"
+                    placeholder="Cole ou digite seu texto aqui para iniciar a leitura personalizada..."></textarea>
+                <span class="char-count" id="charCount">0 caracteres</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn-apply" id="applyText">
+                    <span class="material-icons-round">play_arrow</span>
+                    Iniciar Leitura
+                </button>
+                <button class="btn-clear" id="clearText" title="Limpar texto">
+                    <span class="material-icons-round" style="font-size:18px;">delete_outline</span>
+                    Limpar
+                </button>
+            </div>
+            <button class="btn-secondary" id="resumeBtn" style="display:none;">
+                <span class="material-icons-round" style="font-size:18px;">bookmark</span>
+                Retomar do marcador
+            </button>
+        </div>
+
+        <!-- FONT -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span class="material-icons-round">text_fields</span>
+                Tipografia
+            </div>
+            <div class="font-grid" id="fontGrid">
+                <div class="font-option active" data-font="'Merriweather', serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Merriweather', serif;">Aa</div>
+                    <div class="font-name">Merriweather</div>
+                </div>
+                <div class="font-option" data-font="'Lora', serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Lora', serif;">Aa</div>
+                    <div class="font-name">Lora</div>
+                </div>
+                <div class="font-option" data-font="'Source Serif 4', serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Source Serif 4', serif;">Aa</div>
+                    <div class="font-name">Source Serif</div>
+                </div>
+                <div class="font-option" data-font="'Playfair Display', serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Playfair Display', serif;">Aa</div>
+                    <div class="font-name">Playfair</div>
+                </div>
+                <div class="font-option" data-font="'Crimson Text', serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Crimson Text', serif;">Aa</div>
+                    <div class="font-name">Crimson</div>
+                </div>
+                <div class="font-option" data-font="'Roboto Slab', serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Roboto Slab', serif;">Aa</div>
+                    <div class="font-name">Roboto Slab</div>
+                </div>
+                <div class="font-option" data-font="'Nunito', sans-serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Nunito', sans-serif;">Aa</div>
+                    <div class="font-name">Nunito</div>
+                </div>
+                <div class="font-option" data-font="'Open Sans', sans-serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'Open Sans', sans-serif;">Aa</div>
+                    <div class="font-name">Open Sans</div>
+                </div>
+                <div class="font-option" data-font="'OpenDyslexic', sans-serif" onclick="setFont(this)">
+                    <div class="font-preview" style="font-family: 'OpenDyslexic', sans-serif; font-size:0.9rem;">Aa
+                    </div>
+                    <div class="font-name">OpenDyslexic</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIZE / SPACING / WIDTH -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span class="material-icons-round">format_size</span>
+                Tamanho, Espaçamento e Largura
+            </div>
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Tamanho do texto</span>
+                    <span class="slider-value" id="sizeValue">18px</span>
+                </div>
+                <input type="range" id="fontSizeSlider" min="12" max="36" value="18"
+                    oninput="updateFontSize(this.value)">
+            </div>
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Altura da linha</span>
+                    <span class="slider-value" id="lineHeightValue">1.9</span>
+                </div>
+                <input type="range" id="lineHeightSlider" min="12" max="30" value="19" step="1"
+                    oninput="updateLineHeight(this.value)">
+            </div>
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Espaçamento de letras</span>
+                    <span class="slider-value" id="letterSpacingValue">0.01em</span>
+                </div>
+                <input type="range" id="letterSpacingSlider" min="-2" max="8" value="1" step="1"
+                    oninput="updateLetterSpacing(this.value)">
+            </div>
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Espaçamento de palavras</span>
+                    <span class="slider-value" id="wordSpacingValue">0.05em</span>
+                </div>
+                <input type="range" id="wordSpacingSlider" min="0" max="20" value="5" step="1"
+                    oninput="updateWordSpacing(this.value)">
+            </div>
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Largura da leitura</span>
+                    <span class="slider-value" id="widthValue">780px</span>
+                </div>
+                <input type="range" id="widthSlider" min="480" max="1200" value="780" step="10"
+                    oninput="updateWidth(this.value)">
+            </div>
+        </div>
+
+        <!-- COLORS -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span class="material-icons-round">palette</span>
+                Cores
+            </div>
+            <div class="color-row">
+                <span class="material-icons-round"
+                    style="color:var(--primary-light);font-size:20px;">format_color_text</span>
+                <label>Cor do texto</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="textColor" value="#2d3436" oninput="updateTextColor(this.value)">
+                </div>
+                <span class="color-hex" id="textColorHex">#2d3436</span>
+            </div>
+            <div class="color-row">
+                <span class="material-icons-round"
+                    style="color:var(--primary-light);font-size:20px;">format_paint</span>
+                <label>Cor do fundo</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="bgColor" value="#ffffff" oninput="updateBgColor(this.value)">
+                </div>
+                <span class="color-hex" id="bgColorHex">#ffffff</span>
+            </div>
+        </div>
+
+        <!-- THEMES -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span class="material-icons-round">auto_awesome</span>
+                Temas Predefinidos
+            </div>
+            <div class="theme-grid" id="themeGrid">
+                <div class="theme-option active" style="background:#fff;color:#2d3436;border-color:#e0e0e0;"
+                    data-bg="#ffffff" data-color="#2d3436" onclick="setTheme(this)">
+                    <span class="theme-name">Clássico</span>
+                </div>
+                <div class="theme-option" style="background:#fdf6e3;color:#586e75;" data-bg="#fdf6e3"
+                    data-color="#586e75" onclick="setTheme(this)">
+                    <span class="theme-name">Sépia</span>
+                </div>
+                <div class="theme-option" style="background:#1e1e2e;color:#cdd6f4;" data-bg="#1e1e2e"
+                    data-color="#cdd6f4" onclick="setTheme(this)">
+                    <span class="theme-name">Noturno</span>
+                </div>
+                <div class="theme-option" style="background:#282a36;color:#f8f8f2;" data-bg="#282a36"
+                    data-color="#f8f8f2" onclick="setTheme(this)">
+                    <span class="theme-name">Drácula</span>
+                </div>
+                <div class="theme-option" style="background:#f5f0eb;color:#5c4b37;" data-bg="#f5f0eb"
+                    data-color="#5c4b37" onclick="setTheme(this)">
+                    <span class="theme-name">Papel</span>
+                </div>
+                <div class="theme-option" style="background:#edf7ed;color:#2e5a2e;" data-bg="#edf7ed"
+                    data-color="#2e5a2e" onclick="setTheme(this)">
+                    <span class="theme-name">Floresta</span>
+                </div>
+                <div class="theme-option" style="background:#0d1117;color:#c9d1d9;" data-bg="#0d1117"
+                    data-color="#c9d1d9" onclick="setTheme(this)">
+                    <span class="theme-name">GitHub</span>
+                </div>
+                <div class="theme-option" style="background:#fffbf0;color:#4a3728;" data-bg="#fffbf0"
+                    data-color="#4a3728" onclick="setTheme(this)">
+                    <span class="theme-name">Creme</span>
+                </div>
+                <div class="theme-option" style="background:#f0f4ff;color:#1a365d;" data-bg="#f0f4ff"
+                    data-color="#1a365d" onclick="setTheme(this)">
+                    <span class="theme-name">Oceano</span>
+                </div>
+                <div class="theme-option" style="background:#f3e8ff;color:#5b21b6;" data-bg="#f3e8ff"
+                    data-color="#5b21b6" onclick="setTheme(this)">
+                    <span class="theme-name">Lavanda</span>
+                </div>
+                <div class="theme-option" style="background:#fff1f2;color:#9f1239;" data-bg="#fff1f2"
+                    data-color="#9f1239" onclick="setTheme(this)">
+                    <span class="theme-name">Rosé</span>
+                </div>
+                <div class="theme-option" style="background:#fef3c7;color:#92400e;" data-bg="#fef3c7"
+                    data-color="#92400e" onclick="setTheme(this)">
+                    <span class="theme-name">Arenito</span>
+                </div>
+                <div class="theme-option" style="background:#0f172a;color:#94a3b8;" data-bg="#0f172a"
+                    data-color="#94a3b8" onclick="setTheme(this)">
+                    <span class="theme-name">Meia-noite</span>
+                </div>
+                <div class="theme-option" style="background:#002b36;color:#839496;" data-bg="#002b36"
+                    data-color="#839496" onclick="setTheme(this)">
+                    <span class="theme-name">Solarized</span>
+                </div>
+                <div class="theme-option" style="background:#2e3440;color:#d8dee9;" data-bg="#2e3440"
+                    data-color="#d8dee9" onclick="setTheme(this)">
+                    <span class="theme-name">Nord</span>
+                </div>
+                <div class="theme-option" style="background:#272822;color:#f8f8f2;" data-bg="#272822"
+                    data-color="#f8f8f2" onclick="setTheme(this)">
+                    <span class="theme-name">Monokai</span>
+                </div>
+                <div class="theme-option" style="background:#ecfdf5;color:#065f46;" data-bg="#ecfdf5"
+                    data-color="#065f46" onclick="setTheme(this)">
+                    <span class="theme-name">Gelo</span>
+                </div>
+                <div class="theme-option" style="background:#fef2f2;color:#7c2d12;" data-bg="#fef2f2"
+                    data-color="#7c2d12" onclick="setTheme(this)">
+                    <span class="theme-name">Pôr-do-sol</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESET -->
+        <button class="btn-apply"
+            style="background: linear-gradient(135deg, #636e72, #b2bec3); box-shadow: 0 4px 16px rgba(99,110,114,0.3);"
+            onclick="resetSettings()">
+            <span class="material-icons-round">restart_alt</span>
+            Restaurar Padrões
+        </button>
+    </aside>
+
+    <!-- OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="RF.closeSidebarMobile()"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+        <div class="reader-container animate-in" id="readerContainer">
+            <div class="reader-header">
+                <div class="reader-stats" id="readerStats">
+                    <div class="stat-item">
+                        <span class="material-icons-round">article</span>
+                        <span id="wordCount">0 palavras</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="material-icons-round">schedule</span>
+                        <span id="readTime">~0 min</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="material-icons-round">text_snippet</span>
+                        <span id="paraCount">0 parágrafos</span>
+                    </div>
+                    <span class="progress-pct" id="progressPct" style="display:none;">0% lido</span>
+                    <div class="timer-display" id="timerDisplay" style="display:none;">
+                        <span class="material-icons-round">timer</span>
+                        <span id="timerValue">00:00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="reader-card" id="readerCard">
+                <div class="reading-progress" id="readingProgress"></div>
+                <div class="reader-body-wrapper">
+                    <div class="reading-ruler" id="readingRuler"></div>
+                    <div class="autoscroll-guide" id="autoScrollGuide"></div>
+                    <div class="reader-body" id="readerBody">
+                        <div class="empty-state" id="emptyState">
+                            <span class="material-icons-round empty-icon">menu_book</span>
+                            <h3>Pronto para começar?</h3>
+                            <p>Cole seu texto no painel lateral ou importe um arquivo para começar.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navegação de páginas -->
+                <div class="page-nav" id="pageNav">
+                    <button class="page-nav-btn" id="prevPageBtn" onclick="changePage(-1)" disabled>
+                        <span class="material-icons-round">chevron_left</span> Anterior
+                    </button>
+                    <span class="page-indicator" id="pageIndicator">Página 1 de 1</span>
+                    <button class="page-nav-btn" id="nextPageBtn" onclick="changePage(1)">
+                        Próxima <span class="material-icons-round">chevron_right</span>
+                    </button>
+                </div>
+
+                <!-- Barra de marcador -->
+                <div class="bookmark-bar" id="bookmarkBar" style="display:none;" onclick="RF.saveBookmark()">
+                    <span class="material-icons-round">bookmark_add</span>
+                    <span id="bookmarkBarText">Clique para salvar marcador aqui</span>
+                </div>
+
+                <div class="reader-toolbar" id="readerToolbar" style="display:none;">
+                    <button class="toolbar-btn" title="Diminuir fonte" onclick="adjustSize(-1)">
+                        <span class="material-icons-round">text_decrease</span>
+                    </button>
+                    <button class="toolbar-btn" title="Aumentar fonte" onclick="adjustSize(1)">
+                        <span class="material-icons-round">text_increase</span>
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <button class="toolbar-btn" id="alignLeftBtn" title="Alinhar à esquerda" onclick="setAlign('left')">
+                        <span class="material-icons-round">format_align_left</span>
+                    </button>
+                    <button class="toolbar-btn active" id="alignJustifyBtn" title="Justificar"
+                        onclick="setAlign('justify')">
+                        <span class="material-icons-round">format_align_justify</span>
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <button class="toolbar-btn" id="bionicBtn" title="Leitura Biônica (B)" onclick="toggleBionic()">
+                        <span class="material-icons-round">visibility</span>
+                    </button>
+                    <button class="toolbar-btn" id="rulerBtn" title="Régua de leitura (R)" onclick="toggleRuler()">
+                        <span class="material-icons-round">horizontal_rule</span>
+                    </button>
+                    <button class="toolbar-btn" id="pageModeBtn" title="Modo páginas (P)" onclick="togglePageMode()">
+                        <span class="material-icons-round">menu_book</span>
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <button class="toolbar-btn" title="Rolar para o topo" onclick="scrollToTop()">
+                        <span class="material-icons-round">vertical_align_top</span>
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <div class="toolbar-dr-group">
+                        <button class="toolbar-btn dr-btn" title="RSVP — Palavra por vez"
+                            onclick="RF.startRSVP()">RSVP</button>
+                        <button class="toolbar-btn dr-btn" title="ORP — Ponto ótimo de fixação"
+                            onclick="RF.startORP()">ORP</button>
+                        <button class="toolbar-btn dr-btn" title="Chunking — Grupos de palavras"
+                            onclick="RF.startChunking()">Chunk</button>
+                        <button class="toolbar-btn dr-btn" title="Scroll automático com guia"
+                            onclick="RF.startAutoScroll()">
+                            <span class="material-icons-round" style="font-size:16px;">swap_vert</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MINIMAPA -->
+    <div class="minimap" id="minimapEl">
+        <div class="minimap-content" id="minimapContent">
+            <div class="minimap-text" id="minimapText"></div>
+            <div class="minimap-viewport" id="minimapViewport"></div>
+        </div>
+        <div class="minimap-label">Mapa</div>
+    </div>
+
+    <!-- FOCUS EXIT -->
+    <button class="focus-exit-btn" id="focusExitBtn" onclick="RF.toggleFocusMode()">
+        <span class="material-icons-round" style="font-size:16px;">close</span>
+        Sair do modo foco (Esc)
+    </button>
+
+    <!-- DYNAMIC READING OVERLAY -->
+    <div class="dr-overlay" id="drOverlay">
+        <div class="dr-progress-track">
+            <div class="dr-progress-bar" id="drProgressBar" style="width:0%"></div>
+        </div>
+        <div class="dr-word-area">
+            <div id="drWord"></div>
+        </div>
+        <div class="dr-controls">
+            <button class="dr-ctrl-btn" title="Diminuir velocidade" onclick="RF.drSpeedDown()">
+                <span class="material-icons-round">remove</span>
+            </button>
+            <div class="dr-speed-display">
+                Velocidade<br>
+                <span id="drSpeedValue">300 WPM</span>
+            </div>
+            <button class="dr-ctrl-btn" title="Aumentar velocidade" onclick="RF.drSpeedUp()">
+                <span class="material-icons-round">add</span>
+            </button>
+            <button class="dr-ctrl-btn primary" id="drPauseBtn" title="Pausar / Continuar (Espaço)"
+                onclick="RF.drPauseToggle()">
+                <span class="material-icons-round">pause</span>
+            </button>
+            <button class="dr-ctrl-btn stop" title="Parar (Esc)" onclick="RF.drStop()">
+                <span class="material-icons-round">stop</span>
+            </button>
+            <div class="dr-chunk-controls" id="drChunkControls" style="display:none;">
+                <button class="dr-ctrl-btn" title="Menos palavras por chunk" onclick="RF.drChunkDown()">
+                    <span class="material-icons-round">remove</span>
+                </button>
+                <div class="dr-chunk-display">
+                    Chunk<br>
+                    <span id="drChunkValue">3 palavras</span>
+                </div>
+                <button class="dr-ctrl-btn" title="Mais palavras por chunk" onclick="RF.drChunkUp()">
+                    <span class="material-icons-round">add</span>
+                </button>
+            </div>
+        </div>
+        <div class="dr-extras">
+            <div class="dr-extra-group">
+                <span class="material-icons-round"
+                    style="color:rgba(255,255,255,0.5);font-size:18px;">text_fields</span>
+                <button class="dr-ctrl-btn" title="Diminuir fonte" onclick="RF.drFontDown()">
+                    <span class="material-icons-round">text_decrease</span>
+                </button>
+                <span class="dr-extra-value" id="drFontSizeValue">48px</span>
+                <button class="dr-ctrl-btn" title="Aumentar fonte" onclick="RF.drFontUp()">
+                    <span class="material-icons-round">text_increase</span>
+                </button>
+            </div>
+            <div class="dr-extra-group dr-position-group">
+                <span class="material-icons-round" style="color:rgba(255,255,255,0.5);font-size:18px;">pin_drop</span>
+                <span class="dr-extra-label">Posição</span>
+                <input type="range" class="dr-position-slider" id="drPositionSlider" min="0" max="100" value="0"
+                    oninput="RF.drSetPosition(this.value)">
+                <span class="dr-extra-value" id="drPositionValue">0%</span>
+            </div>
+        </div>
+        <div class="dr-info" id="drInfo">RSVP · 300 WPM · 0%</div>
+    </div>
+
+    <!-- AUTO-SCROLL CONTROLS BAR -->
+    <div class="autoscroll-bar" id="autoScrollBar">
+        <span class="autoscroll-bar-label">Auto-scroll</span>
+        <button class="dr-ctrl-btn" title="Mais devagar" onclick="RF.drSpeedDown()">
+            <span class="material-icons-round">remove</span>
+        </button>
+        <div class="dr-speed-display">
+            <span id="autoScrollSpeedValue">1.0x</span>
+        </div>
+        <button class="dr-ctrl-btn" title="Mais rápido" onclick="RF.drSpeedUp()">
+            <span class="material-icons-round">add</span>
+        </button>
+        <button class="dr-ctrl-btn primary" id="autoScrollPauseBtn" title="Pausar / Continuar (Espaço)"
+            onclick="RF.drAutoScrollPause()">
+            <span class="material-icons-round">pause</span>
+        </button>
+        <button class="dr-ctrl-btn stop" title="Parar (Esc)" onclick="RF.drStopAutoScroll()">
+            <span class="material-icons-round">stop</span>
+        </button>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- SHORTCUTS PANEL -->
+    <div class="panel-overlay" id="panelOverlay" onclick="closeShortcuts()"></div>
+    <div class="shortcuts-panel" id="shortcutsPanel">
+        <button class="shortcuts-close" onclick="closeShortcuts()">
+            <span class="material-icons-round">close</span>
+        </button>
+        <div class="shortcuts-title">
+            <span class="material-icons-round">keyboard</span>
+            Atalhos de Teclado
+        </div>
+        <div class="shortcut-list">
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Iniciar leitura</span>
+                <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">Enter</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Modo foco</span>
+                <div class="shortcut-keys"><span class="key">F</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Sair do modo foco</span>
+                <div class="shortcut-keys"><span class="key">Esc</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Leitura Biônica</span>
+                <div class="shortcut-keys"><span class="key">B</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Régua de leitura</span>
+                <div class="shortcut-keys"><span class="key">R</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Modo páginas</span>
+                <div class="shortcut-keys"><span class="key">P</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Próxima página</span>
+                <div class="shortcut-keys"><span class="key">→</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Página anterior</span>
+                <div class="shortcut-keys"><span class="key">←</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Salvar marcador</span>
+                <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">S</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Exportar PDF</span>
+                <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">P</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Mostrar atalhos</span>
+                <div class="shortcut-keys"><span class="key">?</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Aumentar fonte</span>
+                <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">+</span></div>
+            </div>
+            <div class="shortcut-item">
+                <span class="shortcut-desc">Diminuir fonte</span>
+                <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF.js for PDF import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
+
+    <!-- Scripts (loaded in dependency order) -->
+    <script src="js/state.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/minimap.js"></script>
+    <script src="js/reader.js"></script>
+    <script src="js/file-handler.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/shortcuts.js"></script>
+    <script src="js/dynamic-reading.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registrado!', reg))
+                    .catch(err => console.log('Falha ao registrar Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
